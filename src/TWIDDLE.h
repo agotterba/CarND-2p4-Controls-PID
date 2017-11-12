@@ -1,22 +1,7 @@
-#ifndef PID_H
-#define PID_H
+#ifndef TWIDDLE_H
+#define TWIDDLE_H
 
-// class PID {
-// public:
-//   /*
-//   * Errors
-//   */
-//   double p_error;
-//   double i_error;
-//   double d_error;
-
-//   /*
-//   * Coefficients
-//   */ 
-//   double Kp;
-//   double Ki;
-//   double Kd;
-class PID {
+class TWIDDLE {
   //indicies for PID calculation
   double kp_;
   double ki_;
@@ -33,12 +18,12 @@ public:
   /*
   * Constructor
   */
-  PID();
+  TWIDDLE();
 
   /*
   * Destructor.
   */
-  virtual ~PID();
+  virtual ~TWIDDLE();
 
   /*
   * Initialize PID.

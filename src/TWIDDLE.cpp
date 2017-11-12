@@ -1,17 +1,17 @@
-#include "PID.h"
+#include "TWIDDLE.h"
 #include <math.h> 
 
 using namespace std;
 
 /*
-* TODO: Complete the PID class.
+* TODO: Complete the TWIDDLE class.
 */
 
-PID::PID() {}
+TWIDDLE::TWIDDLE() {}
 
-PID::~PID() {}
+TWIDDLE::~TWIDDLE() {}
 
-void PID::Init(double Kp, double Ki, double Kd) {
+void TWIDDLE::Init(double Kp, double Ki, double Kd) {
   kp_ = Kp;
   ki_ = Ki;
   kd_ = Kd;
@@ -22,7 +22,7 @@ void PID::Init(double Kp, double Ki, double Kd) {
   max_int_ = 20.0; //random guess
 }
 
-void PID::UpdateError(double cte) {
+void TWIDDLE::UpdateError(double cte) {
   prev_cte_ = current_cte_;
   current_cte_ = cte;
   diff_cte_ = current_cte_ - prev_cte_;
@@ -34,7 +34,7 @@ void PID::UpdateError(double cte) {
   
 }
 
-double PID::TotalError() {
+double TWIDDLE::TotalError() {
   return -1 * (kp_ * current_cte_ + kd_ * diff_cte_ * ki_ * int_cte_);
 }
 
