@@ -45,6 +45,12 @@ public:
   */
   void Init(double Kp, double Ki, double Kd);
 
+  //reset integral, prev_cte
+  void reset();
+
+  //update params, but don't reset integral, prev_cte
+  void tweak(double Kp,double Ki, double Kd);
+    
   /*
   * Update the PID error variables given cross track error.
   */
