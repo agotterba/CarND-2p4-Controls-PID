@@ -34,6 +34,7 @@ int main()
   uWS::Hub h;
 
   PID pid_steering;
+  PID pid_st33ring;
   PID pid_throttle;
   TWIDDLE twiddle;
   bool use_twiddle;
@@ -117,33 +118,143 @@ int main()
   // double init_speed_ki = 0.000e-0;
 
   // best values after 46 epochs at 15mph (never got max cde below 2.5m)
-  //double init_steer_kp = 1.15488e-1;
-  //double init_steer_kd = 5.19759e-4;
-  //double init_steer_ki = 1.03939e-1;
-  //double init_target_speed  = 15.0;
-  //double init_speed_kp = 3.000e-1;
-  //double init_speed_kd = 0.000e-0;
-  //double init_speed_ki = 0.000e-0;
+  // double init_steer_kp = 1.15488e-1;
+  // double init_steer_kd = 5.19759e-4;
+  // double init_steer_ki = 1.03939e-1;
+  // double init_target_speed  = 15.0;
+  // double init_speed_kp = 3.000e-1;
+  // double init_speed_kd = 0.000e-0;
+  // double init_speed_ki = 0.000e-0;
 
 // decreased rate of integral unwinding, and got these new values
-  double init_steer_kp = 1.15423e-1;
-  double init_steer_kd = 5.20259e-4;
+  // double init_steer_kp = 1.15423e-1;
+  // double init_steer_kd = 5.20259e-4;
+  // double init_steer_ki = 1.03938e-1;
+  // double init_target_speed  = 15.0;
+  // double init_speed_kp = 3.000e-1;
+  // double init_speed_kd = 0.000e-0;
+  // double init_speed_ki = 0.000e-0;
+
+// added cube term
+  // double init_steer_kc = 5.00000e-2; 
+  // double init_steer_kp = 1.15423e-1;
+  // double init_steer_kd = 5.20259e-4;
+  // double init_steer_ki = 1.03938e-1;
+  // double init_target_speed  = 15.0;
+  // double init_speed_kc = 0.000e-0;
+  // double init_speed_kp = 3.000e-1;
+  // double init_speed_kd = 0.000e-0;
+  // double init_speed_ki = 0.000e-0;
+
+  // after 34 epochs (speed got to 16, but leave at 15 here); also, switch to two pid instead of an extra cube term
+  // double init_steer_cp = 5.01126e-2; 
+  // double init_steer_cd = 2.00000e-4; 
+  // double init_steer_ci = 5.00000e-2; 
+  // double init_steer_kp = 1.15054e-1;
+  // double init_steer_kd = 5.20336e-4;
+  // double init_steer_ki = 1.03938e-1;
+  // double init_target_speed  = 15.0;
+  // double init_speed_kp = 3.000e-1;
+  // double init_speed_kd = 0.000e-0;
+  // double init_speed_ki = 0.000e-0;
+
+  //after 20 epochs (speed got to 16 in twiddle, but leave at 15 here);
+  // double init_steer_cp = 5.41126e-2; 
+  // double init_steer_cd = 1.87200e-4; 
+  // double init_steer_ci = 4.11600e-2; 
+  // double init_steer_kp = 1.11777e-1;
+  // double init_steer_kd = 4.88336e-4;
+  // double init_steer_ki = 1.03938e-1;
+  // double init_target_speed  = 15.0;
+  // double init_speed_kp = 3.000e-1;
+  // double init_speed_kd = 0.000e-0;
+  // double init_speed_ki = 0.000e-0;
+
+  //found horrible typo/bug.  retrain with only 1 pid in effect; will add second later.  Revert to params before adding.
+  // double init_steer_cp = 0.00000e-2;
+  // double init_steer_cd = 0.00000e-4; 
+  // double init_steer_ci = 0.00000e-2; 
+  // double init_steer_kp = 1.15423e-1;
+  // double init_steer_kd = 5.20259e-4;
+  // double init_steer_ki = 5.00000e-2;
+  // double init_target_speed  = 15.0;
+  // double init_speed_kp = 3.000e-1;
+  // double init_speed_kd = 1.000e-2;
+  // double init_speed_ki = 1.000e-2;
+
+  //those didn't make it around the track, so back to the full manual settings :(
+  // double init_steer_cp = 0.00000e-2;
+  // double init_steer_cd = 0.00000e-4; 
+  // double init_steer_ci = 0.00000e-2; 
+  // double init_steer_kp = 1.20000e-1;
+  // double init_steer_kd = 5.00000e-5;
+  // double init_steer_ki = 1.00000e-4;
+  // double init_target_speed  = 15.0;
+  // double init_speed_kp = 3.000e-1;
+  // double init_speed_kd = 1.000e-2;
+  // double init_speed_ki = 1.000e-2;
+
+  //got good values after epoch 35; will add cube terms back in.  
+  // double init_steer_cp =  5.00000e-2;
+  // double init_steer_cd = -3.00000e-5; 
+  // double init_steer_ci =  1.80000e-4; 
+  // double init_steer_kp =  1.20000e-1;
+  // double init_steer_kd = -7.50000e-5;
+  // double init_steer_ki =  5.25000e-4;
+  // double init_target_speed  = 15.0;
+  // double init_speed_kp = 3.000e-1;
+  // double init_speed_kd = 1.000e-2;
+  // double init_speed_ki = 1.000e-2;
+
+  //got good values after epoch 22 with all params
+  // double init_steer_cp =  5.00024e-2;
+  // double init_steer_cd = -3.07115e-5; 
+  // double init_steer_ci =  1.85059e-4; 
+  // double init_steer_kp =  1.22560e-1;
+  // double init_steer_kd = -7.61943e-5;
+  // double init_steer_ki =  4.58138e-4;
+  // double init_target_speed  = 15.0;
+  // double init_speed_kp = 3.000e-1;
+  // double init_speed_kd = 1.000e-2;
+  // double init_speed_ki = 1.000e-2;
+
+  //twiddled values from first attempt (before bug)
+  double init_steer_cp = 5.41126e-2; 
+  double init_steer_cd = 1.87200e-4; 
+  double init_steer_ci = 4.11600e-2; 
+  double init_steer_kp = 1.11777e-1;
+  double init_steer_kd = 4.88336e-4;
   double init_steer_ki = 1.03938e-1;
   double init_target_speed  = 15.0;
   double init_speed_kp = 3.000e-1;
   double init_speed_kd = 0.000e-0;
   double init_speed_ki = 0.000e-0;
 
-  pid_steering.Init(init_steer_kp,init_steer_kd,init_steer_ki); 
-  pid_throttle.Init(init_speed_kp,init_speed_kd,init_speed_ki);
+  //manual tuning coefficents, for recording
+  // double init_steer_cp = 0.00000e-2; 
+  // double init_steer_cd = 0.00000e-4; 
+  // double init_steer_ci = 0.00000e-2; 
+  // double init_steer_kp = 1.100e-1;
+  // double init_steer_kd = 5.000e-4;
+  // double init_steer_ki = 1.000e-1;
+  // double init_speed_kp = 3.000e-1;
+  // double init_speed_kd = 0.000e-0;
+  // double init_speed_ki = 0.000e-0;
+  // double init_target_speed  = 15.0;
+
+  
+  pid_steering.Init("mSteering",init_steer_kp,init_steer_kd,init_steer_ki);
+  pid_st33ring.Init("mSt33ring",init_steer_cp,init_steer_cd,init_steer_ci); 
+  pid_throttle.Init("mThrottle",init_speed_kp,init_speed_kd,init_speed_ki);
   twiddle.init(init_steer_kp,init_steer_kd,init_steer_ki,
+               init_steer_cp,init_steer_cd,init_steer_ci,
                init_speed_kp,init_speed_kd,init_speed_ki,
                init_target_speed);
-  use_twiddle = true;
+  use_twiddle = false;
 
   
   //h.onMessage([&pid_steering,&pid_throttle](uWS::WebSocket<uWS::SERVER> ws, char *data, size_t length, uWS::OpCode opCode) {
-  h.onMessage([&pid_steering,&pid_throttle,&twiddle,&init_target_speed,&use_twiddle](uWS::WebSocket<uWS::SERVER> ws, char *data, size_t length, uWS::OpCode opCode) {
+  h.onMessage([&pid_steering,&pid_st33ring,&pid_throttle,&twiddle,&init_target_speed,&use_twiddle](uWS::WebSocket<uWS::SERVER> ws, char *data, size_t length, uWS::OpCode opCode) {
     // "42" at the start of the message means there's a websocket message event.
     // The 4 signifies a websocket message
     // The 2 signifies a websocket event
@@ -157,7 +268,7 @@ int main()
           // j[1] is the data JSON object
           double cte = std::stod(j[1]["cte"].get<std::string>());
           double speed = std::stod(j[1]["speed"].get<std::string>());
-          double angle = std::stod(j[1]["steering_angle"].get<std::string>());
+          //double angle = std::stod(j[1]["steering_angle"].get<std::string>());//not used
           double steering_value;
           double throttle_value;
           bool reset = false;
@@ -180,7 +291,8 @@ int main()
             }
           }else{
             pid_steering.UpdateError(cte);
-            steering_value = pid_steering.TotalError();
+            pid_st33ring.UpdateError(cte*cte*cte);
+            steering_value = pid_steering.TotalError() + pid_st33ring.TotalError();
             speed_error = speed - init_target_speed;
             pid_throttle.UpdateError(speed_error);
             throttle_value = pid_throttle.TotalError();

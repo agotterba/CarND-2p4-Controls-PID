@@ -1,5 +1,7 @@
 #ifndef PID_H
 #define PID_H
+#include <time.h>
+#include <iostream>
 
 // class PID {
 // public:
@@ -23,10 +25,15 @@ class PID {
   double kd_;
   double current_cte_;
   double prev_cte_;
-  double diff_cte_;
+  double delta_cte_;
   double int_cte_;
   double max_int_;
-
+  clock_t  prev_time_;
+  clock_t  current_time_;
+  double delta_t_;
+  double nom_dt_;
+  bool first_iteration_;
+  std::string name_;
 public:
 
   
@@ -43,13 +50,13 @@ public:
   /*
   * Initialize PID.
   */
-  void Init(double Kp, double Ki, double Kd);
+  void Init(std::string Name, double Kp, double Ki, double Kd);
 
   //reset integral, prev_cte
   void reset();
 
   //update params, but don't reset integral, prev_cte
-  void tweak(double Kp,double Ki, double Kd);
+  void tweak(double Kp, double Ki, double Kd);
     
   /*
   * Update the PID error variables given cross track error.
