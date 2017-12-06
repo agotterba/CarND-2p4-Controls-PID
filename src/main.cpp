@@ -4,6 +4,8 @@
 #include "PID.h"
 #include "TWIDDLE.h"
 #include <math.h>
+#include <time.h>
+#include <chrono>
 
 // for convenience
 using json = nlohmann::json;
@@ -207,28 +209,28 @@ int main()
   // double init_speed_ki = 1.000e-2;
 
   //got good values after epoch 22 with all params
-  // double init_steer_cp =  5.00024e-2;
-  // double init_steer_cd = -3.07115e-5; 
-  // double init_steer_ci =  1.85059e-4; 
-  // double init_steer_kp =  1.22560e-1;
-  // double init_steer_kd = -7.61943e-5;
-  // double init_steer_ki =  4.58138e-4;
-  // double init_target_speed  = 15.0;
-  // double init_speed_kp = 3.000e-1;
-  // double init_speed_kd = 1.000e-2;
-  // double init_speed_ki = 1.000e-2;
-
-  //twiddled values from first attempt (before bug)
-  double init_steer_cp = 5.41126e-2; 
-  double init_steer_cd = 1.87200e-4; 
-  double init_steer_ci = 4.11600e-2; 
-  double init_steer_kp = 1.11777e-1;
-  double init_steer_kd = 4.88336e-4;
-  double init_steer_ki = 1.03938e-1;
+  double init_steer_cp =  5.00024e-2;
+  double init_steer_cd = -3.07115e-5; 
+  double init_steer_ci =  1.85059e-4; 
+  double init_steer_kp =  1.22560e-1;
+  double init_steer_kd = -7.61943e-5;
+  double init_steer_ki =  4.58138e-4;
   double init_target_speed  = 15.0;
   double init_speed_kp = 3.000e-1;
-  double init_speed_kd = 0.000e-0;
-  double init_speed_ki = 0.000e-0;
+  double init_speed_kd = 1.000e-2;
+  double init_speed_ki = 1.000e-2;
+
+  //twiddled values from first attempt (before bug was fixed, for comparison)
+  // double init_steer_cp = 5.41126e-2; 
+  // double init_steer_cd = 1.87200e-4; 
+  // double init_steer_ci = 4.11600e-2; 
+  // double init_steer_kp = 1.11777e-1;
+  // double init_steer_kd = 4.88336e-4;
+  // double init_steer_ki = 1.03938e-1;
+  // double init_target_speed  = 15.0;
+  // double init_speed_kp = 3.000e-1;
+  // double init_speed_kd = 0.000e-0;
+  // double init_speed_ki = 0.000e-0;
 
   //manual tuning coefficents, for recording
   // double init_steer_cp = 0.00000e-2; 
@@ -252,9 +254,9 @@ int main()
                init_target_speed);
   use_twiddle = false;
 
-  
+  auto start_time = std::chrono::system_clock::now();
   //h.onMessage([&pid_steering,&pid_throttle](uWS::WebSocket<uWS::SERVER> ws, char *data, size_t length, uWS::OpCode opCode) {
-  h.onMessage([&pid_steering,&pid_st33ring,&pid_throttle,&twiddle,&init_target_speed,&use_twiddle](uWS::WebSocket<uWS::SERVER> ws, char *data, size_t length, uWS::OpCode opCode) {
+  h.onMessage([&start_time,&pid_steering,&pid_st33ring,&pid_throttle,&twiddle,&init_target_speed,&use_twiddle](uWS::WebSocket<uWS::SERVER> ws, char *data, size_t length, uWS::OpCode opCode) {
     // "42" at the start of the message means there's a websocket message event.
     // The 4 signifies a websocket message
     // The 2 signifies a websocket event
@@ -268,7 +270,7 @@ int main()
           // j[1] is the data JSON object
           double cte = std::stod(j[1]["cte"].get<std::string>());
           double speed = std::stod(j[1]["speed"].get<std::string>());
-          //double angle = std::stod(j[1]["steering_angle"].get<std::string>());//not used
+          double angle = std::stod(j[1]["steering_angle"].get<std::string>());//not used
           double steering_value;
           double throttle_value;
           bool reset = false;
@@ -297,8 +299,11 @@ int main()
             pid_throttle.UpdateError(speed_error);
             throttle_value = pid_throttle.TotalError();
           }
+          //double mytime = ((double)clock()) / ((double)CLOCKS_PER_SEC);
+          auto cur_time = std::chrono::system_clock::now();
+          std::chrono::duration<double> elapsed_seconds = cur_time - start_time;
           // DEBUG
-          //std::cout << "CTE: " << cte << " Steering Value: " << steering_value << " speed_error: " << speed_error << " Throttle Value: " << throttle_value << std::endl;
+          std::cout << "Time: "<< elapsed_seconds.count() <<" CTE: " << cte << " Steering angle: " << steering_value * 25.0 << " received angle: " << angle << " speed_error: " << speed_error << " Throttle Value: " << throttle_value << std::endl;
           json msgJson;
           if (reset){
             std::cout <<"resetting simulation\n";
