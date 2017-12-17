@@ -208,17 +208,17 @@ int main()
   // double init_speed_kd = 1.000e-2;
   // double init_speed_ki = 1.000e-2;
 
-  //got good values after epoch 22 with all params
-  double init_steer_cp =  5.00024e-2;
-  double init_steer_cd = -3.07115e-5; 
-  double init_steer_ci =  1.85059e-4; 
-  double init_steer_kp =  1.22560e-1;
-  double init_steer_kd = -7.61943e-5;
-  double init_steer_ki =  4.58138e-4;
-  double init_target_speed  = 15.0;
-  double init_speed_kp = 3.000e-1;
-  double init_speed_kd = 1.000e-2;
-  double init_speed_ki = 1.000e-2;
+  //CURRENT: got good values after epoch 22 with all params
+  // double init_steer_cp =  5.00024e-2;
+  // double init_steer_cd = -3.07115e-5; 
+  // double init_steer_ci =  1.85059e-4; 
+  // double init_steer_kp =  1.22560e-1;
+  // double init_steer_kd = -7.61943e-5;
+  // double init_steer_ki =  4.58138e-4;
+  // double init_target_speed  = 15.0;
+  // double init_speed_kp = 3.000e-1;
+  // double init_speed_kd = 1.000e-2;
+  // double init_speed_ki = 1.000e-2;
 
   //twiddled values from first attempt (before bug was fixed, for comparison)
   // double init_steer_cp = 5.41126e-2; 
@@ -244,7 +244,31 @@ int main()
   // double init_speed_ki = 0.000e-0;
   // double init_target_speed  = 15.0;
 
+  //suspect that 15mph is just not a good speed.  Forums say 50 is common; will try that
+  // double init_steer_cp = 0.00000e-2; 
+  // double init_steer_cd = 0.00000e-4; 
+  // double init_steer_ci = 0.00000e-2; 
+  // double init_steer_kp = 1.00000e-1;
+  // double init_steer_kd = 4.00000e-3;
+  // double init_steer_ki = 1.00000e-0;
+  // double init_speed_kp = 1.25000e-1;
+  // double init_speed_kd = 1.00000e-4;
+  // double init_speed_ki = 7.97906e-1;
+  // double init_target_speed  = 50.0;
+
   
+//Twiddle after 71 epochs
+  double init_steer_cp = 6.27031e-6; 
+  double init_steer_cd = 5.17220e-6; 
+  double init_steer_ci = 3.49664e-7; 
+  double init_steer_kp = 9.54053e-2;
+  double init_steer_kd = 4.01702e-3;
+  double init_steer_ki = 9.75009e-1;
+  double init_speed_kp = 1.25000e-1;
+  double init_speed_kd = 1.00000e-4;
+  double init_speed_ki = 7.97906e-1;
+  double init_target_speed  = 50.0;
+
   pid_steering.Init("mSteering",init_steer_kp,init_steer_kd,init_steer_ki);
   pid_st33ring.Init("mSt33ring",init_steer_cp,init_steer_cd,init_steer_ci); 
   pid_throttle.Init("mThrottle",init_speed_kp,init_speed_kd,init_speed_ki);
@@ -303,7 +327,7 @@ int main()
           auto cur_time = std::chrono::system_clock::now();
           std::chrono::duration<double> elapsed_seconds = cur_time - start_time;
           // DEBUG
-          std::cout << "Time: "<< elapsed_seconds.count() <<" CTE: " << cte << " Steering angle: " << steering_value * 25.0 << " received angle: " << angle << " speed_error: " << speed_error << " Throttle Value: " << throttle_value << std::endl;
+          //std::cout << "Time: "<< elapsed_seconds.count() <<" CTE: " << cte << " Steering angle: " << steering_value * 25.0 << " received angle: " << angle << " speed_error: " << speed_error << " Throttle Value: " << throttle_value << std::endl;
           json msgJson;
           if (reset){
             std::cout <<"resetting simulation\n";

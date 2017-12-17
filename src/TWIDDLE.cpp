@@ -24,16 +24,13 @@ void TWIDDLE::init(double init_steer_kp, double init_steer_kd, double init_steer
   st33ring.kp = init_steer_cp;
   st33ring.kd = init_steer_cd;
   st33ring.ki = init_steer_ci; 
-  //steering.dp = steering.kp / 100.0; //rely on 'no improvements this epoch' to determine when to raise speed
-  //steering.dd = steering.kd / 100.0;
-  //steering.di = steering.ki / 100.0;
-  steering.dp = 3e-4; 
-  steering.dd = 1.3e-9;
-  steering.di = 6.5e-9;
-  st33ring.dp = 8.0e-9; 
-  st33ring.dd = 5.0e-12;
-  st33ring.di = 9e-10;
-  init_steering = steering;
+  steering.dp = 7.0e-3; 
+  steering.dd = 1.0e-8;
+  steering.di = 1.0e-5;
+  st33ring.dp = 4.0e-10;
+  st33ring.dd = 4.0e-10;
+  st33ring.di = 4.0e-7;
+  init_steering = steering; //remember initial settings to compare dp/dd/di against, and figure out if we're ready to increase speed
   init_st33ring = st33ring;
   throttle.kp = init_speed_kp;
   throttle.kd = init_speed_kd;
@@ -52,14 +49,15 @@ void TWIDDLE::init(double init_steer_kp, double init_steer_kd, double init_steer
   //INTERNAL STATE
   reset = false;
   step_count = 0;
-  step_limit = 3260; //one lap at 15mph
+  //step_limit = 3260; //one lap at 15kph
+  step_limit = 1200; //reduced now that I'm trying 50kph
   param_ring = 0; //0 kp, 1 for kd, 2 for ki, 3 for cp, 4 for cd, 5 for ci
   posneg_ring = 0; //0 for positive, 1 for negative
   chew_run = true;
   init_run = true;
   improved_this_epoch = false;
   run_cum_error = 0.0;
-  best_error = 1e6; // if the error really was this high, the car would be off the road
+  best_error = 1e6; // if the error really was this high, the car would be way off the road.  Normal values are <3000
   max_single_error = 0.0;
   fact_increase = 1.5;
   fact_decrease = 0.5;
@@ -155,9 +153,9 @@ void TWIDDLE::apply_reset(){
         double dparam_sum =      (steering.dp / (init_steering.kp > 1e-7 ? init_steering.kp : 1e-7))
                                + (steering.dd / (init_steering.kd > 1e-7 ? init_steering.kd : 1e-7))
                                + (steering.di / (init_steering.ki > 1e-7 ? init_steering.ki : 1e-7))
-          //                     + (st33ring.dp / (init_st33ring.kp > 1e-7 ? init_st33ring.kp : 1e-7))
-          //                     + (st33ring.dd / (init_st33ring.kd > 1e-7 ? init_st33ring.kd : 1e-7))
-          //                     + (st33ring.di / (init_st33ring.ki > 1e-7 ? init_st33ring.ki : 1e-7))
+                               + (st33ring.dp / (init_st33ring.kp > 1e-7 ? init_st33ring.kp : 1e-7))
+                               + (st33ring.dd / (init_st33ring.kd > 1e-7 ? init_st33ring.kd : 1e-7))
+                               + (st33ring.di / (init_st33ring.ki > 1e-7 ? init_st33ring.ki : 1e-7))
           ;
         cout << "\n\n";
         cout << "FINISHED EPOCH " << epoch << "\n";
@@ -274,6 +272,6 @@ bool TWIDDLE::eval_posneg(string kname, double &k_param, double &d_param, bool i
 void TWIDDLE::update_run_cum_error(double cte){
   //can change update function as desired here
   //run_cum_error += (cte * cte);
-  //penalize larger errors even more severely
+  //penalize larger errors more severely: don't care about small errors- avoid hitting the edge!
   run_cum_error += (cte * cte * cte * cte);
 }
