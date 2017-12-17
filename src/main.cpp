@@ -253,7 +253,7 @@ int main()
   // double init_steer_ki = 1.00000e-0;
   // double init_speed_kp = 1.25000e-1;
   // double init_speed_kd = 1.00000e-4;
-  // double init_speed_ki = 7.97906e-1;
+  // double init_speed_ki = 8.00000e-1;
   // double init_target_speed  = 50.0;
 
   
@@ -266,7 +266,7 @@ int main()
   double init_steer_ki = 9.75009e-1;
   double init_speed_kp = 1.25000e-1;
   double init_speed_kd = 1.00000e-4;
-  double init_speed_ki = 7.97906e-1;
+  double init_speed_ki = 8.00000e-1;
   double init_target_speed  = 50.0;
 
   pid_steering.Init("mSteering",init_steer_kp,init_steer_kd,init_steer_ki);
